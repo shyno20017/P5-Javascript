@@ -3,6 +3,8 @@ var button;
 
 var elements = [];
 
+var APIKEY = '' //Enter your api key from openweathermap.org
+
 function setup() {
     noCanvas()
     input = createInput('Enter City');
@@ -28,7 +30,7 @@ function setup() {
     elements.push(createDiv(''));
     elements.push(createDiv(''));
     //createCanvas(200, 200);
-    loadJSON('http://api.openweathermap.org/data/2.5/weather?q=Cairo&APPID=212c717b7f310f33728a0acd9dd66c66', gotData, 'jsonp');
+    loadJSON('http://api.openweathermap.org/data/2.5/weather?q=USA&APPID=' + APIKEY, gotData, 'jsonp');
 }
 
 function gotData(data) {
@@ -54,5 +56,5 @@ function gotData(data) {
 }
 
 function update() {
-    loadJSON('http://api.openweathermap.org/data/2.5/weather?q=' + input.value() + '&APPID=212c717b7f310f33728a0acd9dd66c66', gotData, 'jsonp');
+    loadJSON('http://api.openweathermap.org/data/2.5/weather?q=' + input.value() + APIKEY, gotData, 'jsonp');
 }
