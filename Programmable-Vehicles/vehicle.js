@@ -1,5 +1,5 @@
 class Vehicle {
-  constructor(x, y, angle, mColor, sColor) {
+  constructor(x, y, angle, apply=()=>1, setup=()=>1) {
     this.pos = createVector(x, y);
     this.vel = createVector(0, 0);
     this.acc = createVector(0, 0);
@@ -9,11 +9,14 @@ class Vehicle {
     this.hp = 100;
     this.ep = 100;
     this.counter = 0;
-    this.mColor = mColor;
-    this.sColor = sColor;
+    this.mColor = color(255, 255, 255);
+    this.sColor = color(255, 0, 0);
     this.state = {};
     this.storage = {};
     this.destroyed = false;
+    this.setup = setup;
+    this.apply = apply;
+    this.timer = 0;
   }
 
   show() {
@@ -39,7 +42,7 @@ class Vehicle {
 
   moveForward(mag) {
     mag = constrain(mag, -1, 1);
-    let p = createVector(0.2, 0);
+    let p = createVector(0.1, 0);
     p.rotate(this.rot);
     p.mult(mag)
     this.applyForce(p.x, p.y, 0);
@@ -71,11 +74,19 @@ class Vehicle {
 
   rotateClockwise(mag) {
     mag = constrain(mag, -1, 1);
-    this.racc += (0.2 * mag);
+    this.racc += (0.1 * mag);
   }
 
   rotateAntiClockwise(mag) {
     this.rotateClockwise(-mag);
+  }
+
+  setMainColor(r, g, b) {
+    this.mColor = color(r, g, b);
+  }
+
+  setSideColor(r, g, b) {
+    this.sColor = color(r, g, b);
   }
 
   getForwardSpeed() {
@@ -142,6 +153,7 @@ class Vehicle {
 
     this.counter = constrain(this.counter - 1, 0, 100);
     this.ep = constrain(this.ep + 0.5, 0, 100);
+    this.timer++;
   }
 
   getHP() {
@@ -157,26 +169,14 @@ class Vehicle {
   }
 
   search(angle) {
-    if (this.ep < 5) {
-      return {failed: 'energy', present: false, distance: -1};
-    } else if (angle > 180 || angle < 0) {
-      return {failed: 'invalid', present: false, distance: -1};
-    } else {
-      this.ep -= 5;
-      for (car of cars) {
-        if (this !== car && collidePointArc(car.pos.x, car.pos.y, this.pos.x, this.pos.y, 1500, this.rot, angle)) {
-          return {failed: false, present: true, distance: (((this.pos.y - car.pos.y) ** 2 + (this.pos.x - car.pos.x) ** 2) ** 0.5) / 20}
-        }
-      }
-      return {failed: false, present: false, distance: -1};
-    }
+    return this.master.search(this, angle);
   }
 
-  set(name, value) {
+  setValue(name, value) {
     this.storage[name] = value;
   }
 
-  get(name) {
+  getValue(name) {
     return this.storage[name]
   }
 
