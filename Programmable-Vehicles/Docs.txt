@@ -1,0 +1,153 @@
+`How to program the vehicles:
+
+The Vehicle Class is given a setup function and apply function.
+They should be fomatted like:`
+function myCarSetup(car) {
+  ...
+}
+
+function myCarApply(car) {
+  ...
+}
+`
+They can be named anything.
+
+They should have a single argument called car.
+Here are the functions that can be called on car:
+
+`
+car.getHP(); `Returns the current health of the vehicle. Max: 100`
+car.getEP(); `Returns the current energy of the vehicle. Max: 100`
+
+car.setMainColor(reg, green, blue);           `Sets the main color of the vehicle to the rgb value.`
+
+car.setSideColor(red, green, blue);           `Sets the side color of the vehicle to the rgb value.`
+
+car.moveForward(magnitude);                   `Magnitude should be a value between -1 and 1 where
+                                              1 is full push forwards while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              moveBackward with positive magnitude: `
+                                              car.moveForward(-0.5) === car.moveBackward(0.5)
+
+car.moveBackward(magnitude);                  `Magnitude should be a value between -1 and 1 where
+                                              1 is full push backwards while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              moveForward with positive magnitude: `
+                                              car.moveBackward(-0.5) === car.moveForward(0.5)
+
+car.moveRight(magnitude);                     `Magnitude should be a value between -1 and 1 where
+                                              1 is full push to the right while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              moveLeft with positive magnitude: `
+                                              car.moveRight(-0.5) === car.moveLeft(0.5)
+
+car.moveLeft(magnitude);                      `Magnitude should be a value between -1 and 1 where
+                                              1 is full push to the left while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              moveRight with positive magnitude: `
+                                              car.moveLeft(-0.5) === car.moveRight(0.5)
+
+car.rotateClockwise(magnitude);               `Magnitude should be a value between -1 and 1 where
+                                              1 is full push clockwise while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              rotateAntiClockwise with positive magnitude: `
+                                              car.rotateClockwise(-0.5) === car.rotateAntiClockwise(0.5)
+                                              `Equivalant to calling rotateC: `
+                                              car.rotateClockwise(magnitude) ===  car.rotateC(magnitude)
+
+car.rotateAntiClockwise(magnitude);           `Magnitude should be a value between -1 and 1 where
+                                              1 is full push anticlockwise while 0.5 is half the push
+                                              Note: negative values are equivalant to calling
+                                              rotateClockwise with positive magnitude: `
+                                              car.rotateAntiClockwise(-0.5) === car.rotateClockwise(0.5)
+                                              `Equivalant to calling rotateAC: `
+                                              car.rotateAntiClockwise(magnitude) ===  car.rotateAC(magnitude)
+
+car.fire();                                   `Fires a bullet that costs 15 energy: Returns an object with value failed, failed is false
+                                              if the bullet was fired succesfully, 'energy' if the bullet was not fired due to not enough
+                                              energy, 'recharge' if the bullet was not fired because the cooldown has not worn of.`
+
+car.ready();                                  `Return true if the vehicle's cooldown has worn off, false otherwise`
+
+car.getForwardSpeed();                        `Returns the speed of the vehicle in the direction where its heading.
+                                              Equivalent to the negative of getBackwardSpeed: `
+                                              car.getForwardSpeed() === -car.getBackwardSpeed()
+
+car.getBackwardSpeed();                       `Returns the speed of the vehicle in the direction opposite to
+                                              where its heading. Equivalent to the negative of getForwardSpeed: `
+                                              car.getBackwardSpeed() === -car.getForwardSpeed()
+
+car.getRightSpeed();                          `Returns the speed of the vehicle in the direction to its right.
+                                              Equivalent to the negative of getLeftSpeed: `
+                                              car.getRightSpeed() === -car.getLeftSpeed()
+
+car.getLeftSpeed();                           `Returns the speed of the vehicle in the direction to its left.
+                                              Equivalent to the negative of getRightSpeed: `
+                                              car.getLeftSpeed() === -car.getRightSpeed()
+
+car.getRotation();                            `Returns the heading of the vehicle: 0 -> 360 degrees`
+
+car.getRotationClockwise();                   `Returns the speed of rotation of the vehicle clockwise
+                                              Equivalent to the negative of getRotationAntiClockwise: `
+                                              car.getRotationClockwise() === -car.getRotationAntiClockwise()
+
+car.getRotationAntiClockwise();               `Returns the speed of rotation of the vehicle anticlockwise
+                                              Equivalent to the negative of getRotationClockwise: `
+                                              car.getRotationAntiClockwise() === -car.getRotationClockwise()
+
+car.setValue(name, value);                    `Sets a register with the name and value that can be later retrieved by getValue.
+                                              Can be used to store values between calls`
+
+car.getValue(name);                           `Gets the value of the register with the name previously set with setValue`
+
+car.search(angle);                            `Searches for enemy vehicle costing 5 energy.
+                                              Returns an object with three fields: failed, present, distance.
+                                              failed is false if the search was done, 'invalid' if the angle was less than 0 or more than 180,
+                                              'energy' if the vehicle does not have enough energy.
+                                              present is true if an enemy was detected within the arc, false if no enemy was detected. present is
+                                              always false if the search failed.
+                                              distance is the value of the distance to the found enemy (0 -> 100), or -1 if the search failed or no enemy was found`
+
+car.getState();                               `Returns an object with 2 fields: gotHit, hitEnemy
+                                              gotHit is true if the vehicle was hit, false otherwise.
+                                              hitEnemy is true if a vehicle was hit by your bullet, false otherwise.`
+
+car.getTime();                                `Returns the number of frames since the the setup function was called`
+
+
+`Example Vehicle:`
+
+function setupCar(car) {
+  car.setMainColor(255, 0, 0);
+  car.setSideColor(0, 127, 127);
+  car.setValue('enemy', {present: false});
+  car.setValue('run', false);
+}
+
+function applyCar(car) {
+  if (car.getState().gotHit) {
+    car.setValue('run', true);
+  }
+  if (car.getTime() % 20 === 0) {
+    car.setValue('enemy', car.search(30));
+    car.setValue('run', false);
+  }
+  if (car.getValue('run')) {
+    car.moveBackward(1);
+    car.moveRight(1);
+  } else if (car.getValue('enemy').present) {
+    if (car.getRotationClockwise() > 0) {
+      car.rotateAC(0.9);
+    } else {
+      car.rotateC(0.9);
+    }
+    if (car.getValue('enemy').distance > 45) {
+      car.moveForward(0.9);
+    } else if (car.getValue('enemy').distance < 25) {
+      car.moveBackward(0.9);
+    }
+    car.fire();
+  } else {
+    car.rotateC(0.5);
+  }
+}

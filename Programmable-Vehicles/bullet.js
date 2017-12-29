@@ -1,9 +1,10 @@
 class Bullet {
-  constructor(x, y, rot) {
+  constructor(x, y, rot, shooter) {
     this.pos = createVector(x, y);
     this.vel = createVector(20, 0);
     this.vel.rotate(rot);
     this.pos.add(this.vel);
+    this.shooter = shooter;
 
     this.done = false;
   }

@@ -9,7 +9,7 @@ class Game {
   }
 
   fire(car) {
-    this.bullets.push(new Bullet(car.pos.x, car.pos.y, car.rot));
+    this.bullets.push(new Bullet(car.pos.x, car.pos.y, car.rot, car));
   }
 
   search(shooter, angle) {
@@ -20,8 +20,8 @@ class Game {
     } else {
       shooter.ep -= 5;
       for (let car of this.cars) {
-        if (shooter !== car && collidePointArc(car.pos.x, car.pos.y, shooter.pos.x, shooter.pos.y, 1500, shooter.rot, angle)) {
-          return {failed: false, present: true, distance: (((shooter.pos.y - car.pos.y) ** 2 + (shooter.pos.x - car.pos.x) ** 2) ** 0.5) / 20}
+        if (shooter !== car && collidePointArc(car.pos.x, car.pos.y, shooter.pos.x, shooter.pos.y, 2000, shooter.rot, angle)) {
+          return {failed: false, present: true, distance: (((shooter.pos.y - car.pos.y) ** 2 + (shooter.pos.x - car.pos.x) ** 2) ** 0.5) / 10}
         }
       }
       return {failed: false, present: false, distance: -1};
@@ -33,6 +33,8 @@ class Game {
       let ans = bullet.update(this.cars);
       if (ans) {
         ans.hp -= 5;
+        ans.state.gotHit = true;
+        bullet.shooter.state.hitEnemy = true;
       }
     }
 

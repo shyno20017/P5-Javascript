@@ -11,7 +11,7 @@ class Vehicle {
     this.counter = 0;
     this.mColor = color(255, 255, 255);
     this.sColor = color(255, 0, 0);
-    this.state = {};
+    this.state = {gotHit: false, hitEnemy: false};
     this.storage = {};
     this.destroyed = false;
     this.setup = setup;
@@ -124,8 +124,12 @@ class Vehicle {
     return this.rvel * 10;
   }
 
-  getRotationAnticlockwise() {
+  getRotationAntiClockwise() {
     return -this.rvel * 10;
+  }
+
+  getRotation() {
+    return this.rot;
   }
 
   update() {
@@ -154,6 +158,8 @@ class Vehicle {
     this.counter = constrain(this.counter - 1, 0, 100);
     this.ep = constrain(this.ep + 0.5, 0, 100);
     this.timer++;
+
+    this.state = {gotHit: false, hitEnemy: false};
   }
 
   getHP() {
@@ -178,6 +184,14 @@ class Vehicle {
 
   getValue(name) {
     return this.storage[name]
+  }
+
+  getState() {
+    return this.state;
+  }
+
+  getTime() {
+    return this.timer;
   }
 
   fire() {
