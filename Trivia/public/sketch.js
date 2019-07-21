@@ -2,8 +2,6 @@ let socket;
 let chatBox;
 let chatInput;
 
-window.onbeforeunload = disconnectFromServer;
-
 function setup() {
   noCanvas();
 
@@ -12,7 +10,7 @@ function setup() {
   chatInput.size(400);
   chatInput.changed(sendMsg);
 
-  socket = io.connect("IPADRESS");
+  socket = io.connect("IPADRESS"); // TODO: Change
   socket.on('name', enterName);
   socket.on('join', joinServer);
 }
@@ -38,8 +36,4 @@ function viewMsg(data) {
 function sendMsg() {
   socket.emit('send', {msg: chatInput.value()});
   chatInput.value('');
-}
-
-function disconnectFromServer() {
-  socket.disconnect();
 }
